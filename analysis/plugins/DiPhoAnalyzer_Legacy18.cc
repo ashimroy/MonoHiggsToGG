@@ -179,6 +179,7 @@ struct diphoTree_struc_ {
   float t1pfmetUnclusteredEnUp;
   float t1pfmetUnclusteredEnDown;
   float t1pfmetCorrSig;
+  float t1pfmetSig;
   float t1pfmetCorr;
   float t1pfmetCorrPhi;
   float t1pfmetCorrPx;
@@ -1563,7 +1564,7 @@ void DiPhoAnalyzer_Legacy18::analyze(const edm::Event& iEvent, const edm::EventS
 		      float genVtxX, genVtxY, genVtxZ; 
 		      int eleveto1, eleveto2;
 		      float pfmet,pfmetPhi, pfmetSumEt,t1pfmet,t1pfmetPhi,t1pfmetSumEt,metCorrSumEt;
-                      float t1pfmetCorrSig,t1pfmetCorr,t1pfmetCorrPhi,t1pfmetCorrPx,t1pfmetCorrPy; 
+                      float t1pfmetCorrSig,t1pfmetSig,t1pfmetCorr,t1pfmetCorrPhi,t1pfmetCorrPx,t1pfmetCorrPy; 
                       float calomet,calometPhi, calometSumEt, t1p2pfmet;
 		      float t1pfmetJetEnUp,t1pfmetJetEnDown ,t1pfmetJetResUp,t1pfmetJetResDown,t1pfmetMuonEnUp, t1pfmetMuonEnDown;
                       float t1pfmetElectronEnUp,t1pfmetElectronEnDown,t1pfmetTauEnUp,t1pfmetTauEnDown;
@@ -1598,9 +1599,10 @@ void DiPhoAnalyzer_Legacy18::analyze(const edm::Event& iEvent, const edm::EventS
 		      metCorrSumEt	= theMET->corSumEt();                   // uncorr sumEt
 		      t1pfmet		= theMET->pt();                      // uncorr MET 
 		      t1pfmetPhi	= theMET->corPhi(pat::MET::Type1);   // uncorr phi 
-		      t1pfmetCorrSig    = theMET->metSignificance();   // uncorr met sig
+		      t1pfmetCorrSig    = theMET->metSignificance();   // met sig calculated from covariance Matrix
+		      t1pfmetSig        = theMET->mEtSig();   // met sig [ MET/(Scalar Sum Pt) ] DataFormats/METReco/interface/MET.h
 		      //t1pfmetCorrPhi	= theMET->corPhi(pat::MET::Type1XY); // corr phi                //Debu off 22.09.2020
-                      //t1pfmetCorrPx	= theMET->corPx(pat::MET::Type1XY);  // corr px                //Debu off 22.09.2020
+                      //t1pfmetCorrPx	= theMET->corPx(pat::MET::Type1XY);  // corr px  //Debu off 22.09.2020
                       //t1pfmetCorrPy	= theMET->corPy(pat::MET::Type1XY);  // corr py                //Debu off 22.09.2020
                       //t1pfmetCorr       = TMath::Sqrt(t1pfmetCorrPx*t1pfmetCorrPx + t1pfmetCorrPy*t1pfmetCorrPy); // corr MET                 //Debu off 22.09.2020
 		      double METxcorr = -(METphiXcorr1*nvtx+METphiXcorr2);
@@ -2658,6 +2660,7 @@ void DiPhoAnalyzer_Legacy18::analyze(const edm::Event& iEvent, const edm::EventS
 		      treeDipho_.t1pfmetUnclusteredEnDown= t1pfmetUnclusteredEnDown;
 
                       treeDipho_.t1pfmetCorrSig = t1pfmetCorrSig;
+                      treeDipho_.t1pfmetSig = t1pfmetSig;
 		      treeDipho_.t1pfmetCorr = t1pfmetCorr;
 		      treeDipho_.t1pfmetCorrPhi = t1pfmetCorrPhi;
 		      treeDipho_.t1pfmetCorrPx = t1pfmetCorrPy;
@@ -3079,6 +3082,7 @@ void DiPhoAnalyzer_Legacy18::beginJob() {
   DiPhotonTree->Branch("t1pfmetUnclusteredEnDown",&(treeDipho_.t1pfmetUnclusteredEnDown),"t1pfmetUnclusteredEnDown/F");
 
   DiPhotonTree->Branch("t1pfmetCorrSig",&(treeDipho_.t1pfmetCorrSig),"t1pfmetCorrSig/F");
+  DiPhotonTree->Branch("t1pfmetSig",&(treeDipho_.t1pfmetSig),"t1pfmetSig/F");
   DiPhotonTree->Branch("t1pfmetCorr",&(treeDipho_.t1pfmetCorr),"t1pfmetCorr/F");
   DiPhotonTree->Branch("t1pfmetCorrPhi",&(treeDipho_.t1pfmetCorrPhi),"t1pfmetCorrPhi/F");
   DiPhotonTree->Branch("t1pfmetCorrPx",&(treeDipho_.t1pfmetCorrPx),"t1pfmetCorrPx/F");
@@ -3393,6 +3397,7 @@ void DiPhoAnalyzer_Legacy18::initTreeStructure() {
   treeDipho_.t1pfmet = -500.;
   treeDipho_.t1pfmetCorr = -500.;
   treeDipho_.t1pfmetCorrSig = -500.;
+  treeDipho_.t1pfmetSig = -500.;
   treeDipho_.t1pfmetCorrPhi = -500.;
   treeDipho_.t1pfmetCorrPx = -500.;
   treeDipho_.t1pfmetCorrPy = -500.;
